@@ -93,12 +93,11 @@ export async function POST(request: Request) {
     }
 
     const err = error as Error;
-    return NextResponse.json(
-      {
-        error: true,
-        message: err.message,
-      },
-      { status: 500 }
-    );
+
+    console.log({ err: err.message });
+    return NextResponse.json({
+      error: true,
+      message: err.message,
+    });
   }
 }
