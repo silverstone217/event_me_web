@@ -58,6 +58,10 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+
+  events Event[]
+
+  Members Members[]
 }
 
 model VerificationRequest {
@@ -80,4 +84,57 @@ model VerificationToken {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  location    String
+  startDate   DateTime
+  endDate     DateTime
+  organizerId String   @map("organizer_id")
+  cover       String
+  tags        String   @default("#event")
+  category    String
+  status      String   @default("lauching")
+  isFree      Boolean  @default(true)
+  price       Int      @default(0)
+  isPrivate   Boolean  @default(false)
+  linkAccess  String
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  organizer   User     @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  Members  Members[]
+  contents Contents[]
+
+  @@map("events")
+}
+
+model Members {
+  id        String   @id @default(cuid())
+  eventId   String   @map("event_id")
+  userId    String   @map("user_id")
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("members")
+}
+
+model Contents {
+  id          String   @id @default(cuid())
+  eventId     String   @map("event_id")
+  content     String
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("contents")
 }
